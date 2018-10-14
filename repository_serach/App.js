@@ -1,49 +1,28 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+import React from 'react';
+import {
+  createStackNavigator,
+} from 'react-navigation'; //画面遷移のためのライブラリ
+import Home from './Home';
+import Detail from './Detail'
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+export default createStackNavigator({
+  Home: {
+    screen: Home,  //画面遷移場所の指定
+    navigationOptions: {
+      title: 'Home',//画面のタイトル設定
+    },
+  },
+  Detail : {
+    screen : Detail,
+    navigationOptions: ({navigation}) => ({ //動的にタイトル名を変えるため{navigation}を追加する
+      title: navigation.state.params.item.name,
+    })
 
-type Props = {};
-export default class App extends Component<Props> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
-    );
   }
+},{
+  initialRouteName: 'Home', //画面の初期画面設定
+
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+);
