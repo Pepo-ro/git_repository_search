@@ -62,8 +62,8 @@ export default class App extends Component {
           keyExtractor={(item,index) => item.id }
           onEndReached={() => this.fetchRepositories() }
           onEndReachedThreshold={0.1}
-          onRefresh={() => this.fetchRepositories(true)}
-          refreshing={this.state.refreshing}  //treu の時はonRefreshが呼ばれた後
+          onRefresh={() => this.fetchRepositories(true)}  //pullrefreshがいる　画面を下に引っ張るイベントを感知することができる
+          refreshing={this.state.refreshing}  //treu の時はonRefreshが呼ばれた後  treuの時に更新ボタンが表示される
         />
 
 
