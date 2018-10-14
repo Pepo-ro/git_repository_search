@@ -7,23 +7,58 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, 
+        StyleSheet, 
+        Text,
+        View,
+        TouchableOpacity,
+        FlatList,
+        onEndReached,//描画の下に行った時に呼び出す
+        onEndReachedThreshold,//描画割合を指定する
+      } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
-type Props = {};
-export default class App extends Component<Props> {
+
+
+export default class App extends Component {
+  state = {
+    items: [],
+
+  }
+
+  page = 0;
+
+  fetchRepositories(){
+    const newPage = this.page + 1
+    fetch(`https://api.github.com/search/repositories?q=react&page=${newPage}`)
+      .then(response => response.json())
+      .then(({items}) => {
+        this.page = newPage;
+        this.setState({items: [...this.state.items,...items]}) //スプレット演算子 古いページと新しいページをつなげる
+
+    
+    });
+    console.log(this.page)
+
+  }
+ 
+
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <TouchableOpacity style={{marginTop : 20}} onPress= {() => this. fetchRepositories() }>
+          <Text>Tacth</Text>
+        </TouchableOpacity>
+        <FlatList
+          data={this.state.items}
+          renderItem={({item}) => <Text style={{marginTop: 20}}>{item.name} </Text>}
+          keyExtractor={(item,index) => item.id }
+          onEndReached={() => this.fetchRepositories() }
+          onEndReachedThreshold={0.1}
+        />
+
+
       </View>
     );
   }
@@ -32,18 +67,8 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+ 
 });
