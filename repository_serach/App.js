@@ -23,19 +23,25 @@ import {Platform,
 export default class App extends Component {
   state = {
     items: [],
+    refreshing: false
 
   }
 
   page = 0;
 
-  fetchRepositories(){
-    const newPage = this.page + 1
+  fetchRepositories(refreshing = false){
+    const newPage = refreshing ? 1 :  this.page + 1;
+    this.setState({refreshing  })
     fetch(`https://api.github.com/search/repositories?q=react&page=${newPage}`)
       .then(response => response.json())
       .then(({items}) => {
         this.page = newPage;
-        this.setState({items: [...this.state.items,...items]}) //スプレット演算子 古いページと新しいページをつなげる
-
+        if(refreshing){
+        this.setState({items , refreshing: false}); 
+        }
+        else {
+          this.setState({items  : [...this.state.items,...items], refresing:false})//スプレット演算子 古いページと新しいページをつなげる
+        }
     
     });
     console.log(this.page)
@@ -56,6 +62,8 @@ export default class App extends Component {
           keyExtractor={(item,index) => item.id }
           onEndReached={() => this.fetchRepositories() }
           onEndReachedThreshold={0.1}
+          onRefresh={() => this.fetchRepositories(true)}
+          refreshing={this.state.refreshing}  //treu の時はonRefreshが呼ばれた後
         />
 
 
