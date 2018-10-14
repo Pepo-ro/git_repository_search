@@ -17,6 +17,7 @@ import {Platform,
         onEndReachedThreshold,//描画割合を指定する
         TextInput,
         Image,
+        AppState,
       } from 'react-native';
 
 
@@ -45,7 +46,7 @@ export default class App extends Component {
         }
     
     });
-    console.log(this.state)
+    //console.log(this.state)
 
   }
  
@@ -54,7 +55,28 @@ export default class App extends Component {
 
   }
 
+  //バックグランドで処理をさせるイベント
+  componentDidMount() {
+    AppState.addEventListener('change',this.onChangeState);
+    console.log("Did")
 
+  }
+
+
+  //バックグランドで処理をさせるイベント
+  componentWillUnmount() {
+    AppState.removeEventListener('change',this.onChangeState);
+    console.log("Will")
+  }
+
+  //componentDidMountのchangeイベントが発生した時に呼び出される　アロー演算子で書くことで参照をthisでできて楽
+  onChangeState = (appState) =>{
+    //バックグランドからフロントグラウンドした時にfetchRepositoriesを呼ぶことで最新の情報を表示する
+    if(appState === 'active'){
+        this.fetchRepositories(true);
+    }
+
+  }
 
   render() {
     return (

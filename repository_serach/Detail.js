@@ -49,7 +49,7 @@ export default class Detail extends React.Component{
 
   render (){
     const { navigation: { state: { params: {item}}} } = this.props;  //navigation.state.params.itemが長いので短めに書く方法
-    console.log(item);
+    //console.log(item);
     return (
       <View style={styles.container}>
       {/*画像表示*/}
