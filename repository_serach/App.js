@@ -15,7 +15,7 @@ export default createStackNavigator({
   },
   Detail : {
     screen : Detail,
-    navigationOptions: ({navigation}) => ({
+    navigationOptions: ({navigation}) => ({ //動的にタイトル名を変えるため{navigation}を追加する
       title: navigation.state.params.item.name,
     })
 

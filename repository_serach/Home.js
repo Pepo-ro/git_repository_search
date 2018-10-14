@@ -15,13 +15,16 @@ import {Platform,
         FlatList,
         onEndReached,//描画の下に行った時に呼び出す
         onEndReachedThreshold,//描画割合を指定する
+        TextInput,
+        Image,
       } from 'react-native';
 
 
 export default class App extends Component {
   state = {
     items: [],
-    refreshing: false
+    refreshing: false,
+    text : ''
 
   }
 
@@ -30,7 +33,7 @@ export default class App extends Component {
   fetchRepositories(refreshing = false){
     const newPage = refreshing ? 1 :  this.page + 1;
     this.setState({refreshing  })
-    fetch(`https://api.github.com/search/repositories?q=react&page=${newPage}`)
+    fetch(`https://api.github.com/search/repositories?q=${this.state.text}&page=${newPage}`)
       .then(response => response.json())
       .then(({items}) => {
         this.page = newPage;
@@ -56,14 +59,28 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={{marginTop : 20}} onPress= {() => this.fetchRepositories() }> 
+      <View style={styles.inputWrapper}>
+          <TextInput style={styles.input} onChangeText={(text) => this.setState({text})}/>
+          {/*fetchRepositoriesをtrueにすることで検索が始まる*/}
+          <TouchableOpacity onPress={() => this.fetchRepositories(true) }> 
+              <Text style={styles.searchText}>Search</Text>
+          </TouchableOpacity>
+
+      </View>
+        {/* <TouchableOpacity style={{marginTop : 20}} onPress= {() => this.fetchRepositories() }> 
           <Text>Tacth</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <FlatList
           data={this.state.items}
           renderItem={({item}) => 
-            <TouchableOpacity onPress={() => this.navigateToDetail(item) }>{/*Pressされた時に画面遷移を行う*/}
-                <Text style={{padding: 20}} >{item.name} </Text>
+            <TouchableOpacity style={{padding: 20}} onPress={() => this.navigateToDetail(item) }>{/*Pressされた時に画面遷移を行う*/}
+                <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}} >{item.name} </Text>
+                <View style={{flexDirection: 'row'  }}>
+                    {/*画像表示 画像表示には高さ幅の指定が必要*/}
+                    <Image style={styles.ownerIcon} source={{ uri: item.owner.avatar_url }}></Image>  
+                    {/*ユーザの名前表示*/}
+                    <Text style={styles.ownerName}> {item.owner.login } </Text>
+                </View>
             </TouchableOpacity>
           }
           keyExtractor={(item,index) => (item.id,item.key) }
@@ -85,5 +102,33 @@ const styles = StyleSheet.create({
 
     backgroundColor: '#F5FCFF',
   },
+
+  inputWrapper: {
+    padding: 10,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center'
+  },
+
+  input:{
+    flex:1,
+    padding: 2,
+    backgroundColor: '#EEE',
+    borderRadius: 4
+  },
+  searchText:{
+      padding: 10,
+  },
+
+  ownerIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    marginRight: 5,
+  },
+  ownerName: {
+    fontSize: 14
+  },
+
  
 });
